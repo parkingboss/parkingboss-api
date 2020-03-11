@@ -6,14 +6,14 @@
   "module": "dist/es6/index.js",
   "scripts": {
     "clean": "rm -rf dist types",
+    "postclean": "npm install",
     "build:esm": "tsc",
-    "dev:esm": "tsc -w",
     "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build": "run-p build:*",
+    "dev:esm": "tsc -w",
     "dev:cjs": "tsc -w --project tsconfig.cjs.json",
     "dev": "run-p dev:*",
-    "build": "run-p build:*",
-    "preprepare": "npm run clean",
-    "prepare": "npm run build",
+    "prepare": "npm install && run-s clean build",
     "postversion": "git push && git push --tags && npm publish --access=public"
   },
   "repository": {
