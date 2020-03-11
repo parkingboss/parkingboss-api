@@ -5,7 +5,7 @@ import { queries, ApiQueries } from './queries';
 
 export interface ApiOptions {
   client: string;
-  apiBase?: string | BaseWatcher;
+  apiBase?: string;
   skipNormalization?: boolean;
   skipUrlRewrite?: boolean;
 }
@@ -13,7 +13,7 @@ export interface ApiOptions {
 export interface ApiSettings {
   readonly client: string;
   user: User | null;
-  apiBase: string | BaseWatcher;
+  apiBase: string;
   skipNormalization: boolean;
 }
 
@@ -23,14 +23,22 @@ export interface CoreApi {
 
 export type Api = CoreApi & SessionControl & ApiQueries;
 
-export function Api(opts: ApiOptions): Api {
+function optsToSettings(opts: ApiOptions): ApiSettings {
   const settings: ApiSettings = {
     client: opts.client,
     user: null,
-    apiBase: opts.apiBase || apiBase(),
-    skipNormalization: !!opts.skipNormalization,
+    apiBase: opts.apiBase || "TEMP_FAKE",
+    skipNormalization: !!opts.skipNormalization
   };
+  if (!opts.apiBase) {
+    const watcher = apiBase();
+    watcher.subscribe(newBase => opts.apiBase = newBase);
+  }
+  return settings;
+}
 
+export function Api(opts: ApiOptions): Api {
+  const settings = optsToSettings(opts);
   return Object.assign({ settings },
     session(settings),
     queries(settings),
