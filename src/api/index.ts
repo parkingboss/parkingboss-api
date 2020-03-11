@@ -1,4 +1,4 @@
-import { apiBase, BaseWatcher } from './base';
+import { apiBase } from './base';
 import { User } from './loadUser';
 import { session, SessionControl } from './session';
 import { queries, ApiQueries } from './queries';
@@ -32,7 +32,7 @@ function optsToSettings(opts: ApiOptions): ApiSettings {
   };
   if (!opts.apiBase) {
     const watcher = apiBase();
-    watcher.subscribe(newBase => opts.apiBase = newBase);
+    watcher.subscribe(newBase => settings.apiBase = newBase);
   }
   return settings;
 }
