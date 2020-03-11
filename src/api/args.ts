@@ -13,7 +13,7 @@ export type MediaQuery = Query & {
 };
 
 export type MediasQuery = Query & {
-  valid: IntervalQuery;
+  valid?: IntervalQuery;
   issued?: IntervalQuery;
   revoked?: IntervalQuery;
 };
