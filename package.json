@@ -13,7 +13,7 @@
     "dev:esm": "tsc -w",
     "dev:cjs": "tsc -w --project tsconfig.cjs.json",
     "dev": "run-p dev:*",
-    "prepare": "npm install && run-s clean build",
+    "prepare": "run-s clean build",
     "postversion": "git push && git push --tags && npm publish --access=public"
   },
   "repository": {
