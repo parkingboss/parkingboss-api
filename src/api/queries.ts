@@ -130,8 +130,8 @@ async function apiFetch(
     settings: ApiSettings,
     method: string,
     url: string,
-    body: null|FormData|Blob,
-    query: Query & Record<string, unknown>,
+    body: null|FormData|Blob = null,
+    query: Query & Record<string, unknown> = {},
     authHeader: boolean|string = true,
     ...modernizeFields: string[]
   ) {
