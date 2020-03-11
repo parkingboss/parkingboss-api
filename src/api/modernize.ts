@@ -1,4 +1,4 @@
-import { get, set, each } from 'lodash-es';
+import { get, set, each, fromPairs, toPairs } from 'lodash-es';
 
 // TODO: This works. It'd be better if we added types. Maybe.
 //       Reevaluate if it becomes an issue
@@ -50,7 +50,9 @@ function modernizeAttachments(json: any, keys: string[]) {
 function modernizeItems(json: any, keys: string[]) {
   keys.filter(k => !attachmentKeys.has(k))
     .forEach(key => {
-      Object.assign(json.items, get(json, [key, 'items'], {}));
+      const items = get(json, [key, 'items'], {});
+      Object.assign(json.items, items);
+      set(json, [key, 'items'], fromPairs(Object.keys(items).map(x => [x,x])));
     });
 }
 
