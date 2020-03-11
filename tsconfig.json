@@ -11,8 +11,7 @@
     "emitDecoratorMetadata": false,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist/es6", // Override in tsconfig.cjs.json
-    "declaration": true, // Override in tsconfig.cjs.json
-    "declarationDir": "types", // Override in tsconfig.cjs.json
+    "declaration": true,
     "lib": [ "DOM", "ESNext" ]
   },
   "include": [
