@@ -1,0 +1,53 @@
+{
+  "name": "@parkingboss/api",
+  "version": "0.0.0",
+  "description": "The Parking Boss API",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es6/index.js",
+  "scripts": {
+    "clean": "rm -r dist types",
+    "postclean": "npm install",
+    "pretest": "npm run clean && npm run build",
+    "test": "jest",
+    "build:esm": "tsc",
+    "dev:esm": "tsc -w",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "dev:cjs": "tsc -w --project tsconfig.cjs.json",
+    "build": "run-p build:*",
+    "dev": "run-p dev:*",
+    "prepare": "npm run build",
+    "postversion": "git push && git push --tags && npm publish --access=public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/parkingboss/parkingboss-api.git"
+  },
+  "keywords": [
+    "Parking",
+    "API",
+    "Fetch"
+  ],
+  "author": "Parking Boss",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/parkingboss/parkingboss-api/issues"
+  },
+  "homepage": "https://github.com/parkingboss/parkingboss-api",
+  "devDependencies": {
+    "@types/jwt-decode": "^2.2.1",
+    "@types/lodash-es": "^4.17.3",
+    "@types/store": "^2.0.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "date-fns": "^2.10.0",
+    "jwt-decode": "^2.2.0",
+    "lodash-es": "^4.17.15",
+    "store": "^2.0.12"
+  },
+  "files": [
+    "dist",
+    "types"
+  ]
+}
