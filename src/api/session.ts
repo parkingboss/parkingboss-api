@@ -7,7 +7,9 @@ type UserUpdater = Action<User | null>;
 
 export interface SessionControl {
   setUser(user: User | null): void;
-  subscribe(fn: UserUpdater): () => void;
+  user: {
+    subscribe(fn: UserUpdater): () => void;
+  },
   isLoggedIn(): boolean;
   logIn(redirect: true): void;
   logIn(email: string, password: string): Promise<void>;
@@ -40,7 +42,7 @@ function setupSession(settings: ApiSettings) {
   }
 
   return {
-    subscribe,
+    user: { subscribe },
     setUser(user: User | null): void {
       settings.user = user;
       if (user) {

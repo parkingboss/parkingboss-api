@@ -24,7 +24,7 @@ export interface ApiQueries {
   violations(propertyId: string, query: ViolationsQuery): Promise<ViolationsPayload>;
 }
 
-export function queries(settings: ApiSettings) {
+export function queries(settings: ApiSettings): ApiQueries {
   return {
     fetch: (method: string, url: string, query: Record<string, unknown> = {}, body: null | FormData | Blob = null, useAuthHeader: boolean = true) => apiFetch(settings, method, url, body, query, useAuthHeader),
     get: (url: string, query: Record<string, unknown> = {}, useAuthHeader: boolean = true) => apiFetch(settings, 'GET', url, null, query, useAuthHeader),
