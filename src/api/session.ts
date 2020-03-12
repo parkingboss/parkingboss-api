@@ -6,9 +6,9 @@ type Action<T> = (t: T) => void;
 type UserUpdater = Action<User | null>;
 
 export interface SessionControl {
-  setUser(user: User | null): void;
   user: {
     subscribe(fn: UserUpdater): () => void;
+    set(user: User | null): void;
   },
   isLoggedIn(): boolean;
   logIn(redirect: true): void;
@@ -19,16 +19,17 @@ export interface SessionControl {
 
 export function session(settings: ApiSettings): SessionControl {
   settings.user = loadUser();
-  const userControls = setupSession(settings);
-  return Object.assign(userControls, {
+  const user = userStore(settings);
+  return Object.assign({
+    user,
     isLoggedIn: () => isLoggedIn(settings),
-    logIn: (email: string | true, password?: string) => logIn(settings, userControls.setUser, email, password),
-    renew: (password: string) => renew(settings, userControls.setUser, password),
-    logOut: () => logOut(userControls.setUser),
+    logIn: (email: string | true, password?: string) => logIn(settings, user.set, email, password),
+    renew: (password: string) => renew(settings, user.set, password),
+    logOut: () => logOut(user.set),
   });
 }
 
-function setupSession(settings: ApiSettings) {
+function userStore(settings: ApiSettings) {
   const subscribers = new Set<UserUpdater>();
 
   function notifyUserChanged(user: User | null) {
@@ -42,8 +43,8 @@ function setupSession(settings: ApiSettings) {
   }
 
   return {
-    user: { subscribe },
-    setUser(user: User | null): void {
+    subscribe,
+    set(user: User | null): void {
       settings.user = user;
       if (user) {
         setUser(user);
