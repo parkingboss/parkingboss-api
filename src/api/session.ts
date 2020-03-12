@@ -1,5 +1,5 @@
 import { ApiSettings } from './index';
-import * as urls from '../urls';
+import { urls } from '@parkingboss/utils';
 import { loadUser, setUser, unsetUser, User } from './loadUser';
 
 type Action<T> = (t: T) => void;
