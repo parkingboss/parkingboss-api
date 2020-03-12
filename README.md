@@ -15,3 +15,6 @@ if (api.isLoggedIn()) {
   api.login(true);
 }
 ```
+
+This package _expects_ to be run in a browser context. Refactoring for node has
+is an open TODO.
