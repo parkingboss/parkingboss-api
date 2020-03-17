@@ -1,3 +1,4 @@
+import { qs } from '@parkingboss/utils';
 import storage from 'store/dist/store.modern';
 import decodeJwt from 'jwt-decode';
 
@@ -58,15 +59,29 @@ export interface User extends Jwt {
 
 const AUTH_KEY = "user/auth";
 
-export function loadUser(skipExpiryCheck: boolean = false): User | null {
+function loadFromUrl(skipExpiryCheck: boolean): User | null {
+  const source = Object.assign(
+    {},
+    qs.parse(self.location.search.substr(1)),
+    qs.parse(self.location.hash.substr(1)),
+  );
+  const token = source.access_token || source.token;
+
+  if (!token) return null;
+
+  const jwt = parseJwt({ token, type: "bearer" }, skipExpiryCheck);
+  return jwtToUser(jwt);
+}
+
+function loadFromStorage(skipExpiryCheck: boolean): User | null {
   const data: any = storage.get(AUTH_KEY);
 
   const jwt = parseJwt(data, skipExpiryCheck);
-  if (jwt) {
-    return jwtToUser(jwt);
-  } else {
-    return null;
-  }
+  return jwtToUser(jwt);
+}
+
+export function loadUser(skipExpiryCheck: boolean = false): User | null {
+  return loadFromUrl(skipExpiryCheck) || loadFromStorage(skipExpiryCheck);
 }
 
 export function setUser(data: User) {
@@ -77,7 +92,7 @@ export function unsetUser() {
   storage.remove(AUTH_KEY);
 }
 
-function parseJwt(data: any, skipExpiryCheck: boolean): Jwt | false {
+function parseJwt(data: any, skipExpiryCheck: boolean): Jwt | null {
   if (data && data.token) {
     try {
       const jwt = decodeJwt(data.token) as Jwt;
@@ -90,7 +105,7 @@ function parseJwt(data: any, skipExpiryCheck: boolean): Jwt | false {
       unsetUser();
     }
   }
-  return false;
+  return null;
 }
 
 function notExpired(jwt: Jwt): boolean {
@@ -100,7 +115,9 @@ function notExpired(jwt: Jwt): boolean {
   return false;
 }
 
-function jwtToUser(jwt: Jwt): User {
+function jwtToUser(jwt: Jwt | null): User | null {
+  if (!jwt) return jwt;
+
   const expms = jwt.exp * 1000;
   const iatms = jwt.iat * 1000;
   const nbfms = jwt.nbf * 1000;

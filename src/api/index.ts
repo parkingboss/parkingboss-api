@@ -1,3 +1,4 @@
+import { qs } from '@parkingboss/utils';
 import { apiBase } from './base';
 import { User } from './loadUser';
 import { session, SessionControl } from './session';
@@ -39,8 +40,24 @@ function optsToSettings(opts: ApiOptions): ApiSettings {
 
 export function Api(opts: ApiOptions): Api {
   const settings = optsToSettings(opts);
-  return Object.assign({ settings },
+  const api = Object.assign({ settings },
     session(settings),
     queries(settings),
   );
+  if (!opts.skipUrlRewrite) {
+    self.history.replaceState(null, '', urlWithoutToken());
+  }
+  return api;
+}
+
+const removables = [ 'token', 'access_token', 'accessToken' ];
+function urlWithoutToken(): string {
+  const url = new URL(location.toString());
+  const hash = qs.parse(url.hash);
+  removables.forEach(key => {
+    url.searchParams.delete('token');
+    delete hash[key];
+  });
+  url.hash = qs.stringify(hash);
+  return url.toString();
 }
