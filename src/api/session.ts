@@ -88,9 +88,9 @@ function isLoggedIn(settings: ApiSettings) {
   return !!settings.user;
 }
 
-async function logOut(setUser: UserUpdater) {
+async function logOut(setUser: UserUpdater, skipRedirect = false) {
   setUser(null);
-  window.location.href = urls.logOut;
+  skipRedirect && (window.location.href = urls.logOut);
 }
 
 function renew (settings: ApiSettings, setUser: UserUpdater, password: string): Promise<void> {
