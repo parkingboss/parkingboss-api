@@ -1,6 +1,6 @@
 import { ApiSettings } from './index';
 import { urls } from '@parkingboss/utils';
-import { loadUser, setUser, unsetUser, User } from './loadUser';
+import { loadUser, setUser, unsetUser, jwtUser, User } from './loadUser';
 
 type Action<T> = (t: T) => void;
 type UserUpdater = Action<User | null>;
@@ -75,10 +75,12 @@ async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string 
 
   const result = await self.fetch(url.toString(), { method: 'POST', body });
   const responseBody = await result.json();
+
   if (result.ok) {
-    setUser(responseBody);
+    setUser(jwtUser(responseBody));
     return responseBody;
   }
+
   return responseBody;
 }
 

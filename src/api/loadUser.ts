@@ -69,15 +69,17 @@ function loadFromUrl(skipExpiryCheck: boolean): User | null {
 
   if (!token) return null;
 
-  const jwt = parseJwt({ token, type: "bearer" }, skipExpiryCheck);
-  return jwtToUser(jwt);
+  return jwtUser({ token, type: "bearer" }, skipExpiryCheck);
 }
 
 function loadFromStorage(skipExpiryCheck: boolean): User | null {
   const data: any = storage.get(AUTH_KEY);
 
-  const jwt = parseJwt(data, skipExpiryCheck);
-  return jwtToUser(jwt);
+  return jwtUser(data, skipExpiryCheck);
+}
+
+export function jwtUser(jwt: any, skipExpiryCheck?: boolean) {
+  return jwtToUser(parseJwt(jwt, !!skipExpiryCheck));
 }
 
 export function loadUser(skipExpiryCheck: boolean = false): User | null {
