@@ -13,7 +13,7 @@ export interface SessionControl {
   isLoggedIn(): boolean;
   logIn(redirect: true): void;
   logIn(email: string, password: string): Promise<void>;
-  logOut(): void;
+  logOut(skipRedirect: boolean): void;
   renew(password: string): Promise<void>;
 }
 
@@ -25,7 +25,7 @@ export function session(settings: ApiSettings): SessionControl {
     isLoggedIn: () => isLoggedIn(settings),
     logIn: (email: string | true, password?: string) => logIn(settings, user.set, email, password),
     renew: (password: string) => renew(settings, user.set, password),
-    logOut: () => logOut(user.set),
+    logOut: (skipRedirect: boolean) => logOut(user.set, skipRedirect),
   });
 }
 
