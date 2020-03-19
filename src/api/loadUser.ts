@@ -69,7 +69,11 @@ function loadFromUrl(skipExpiryCheck: boolean): User | null {
 
   if (!token) return null;
 
-  return jwtUser({ token, type: "bearer" }, skipExpiryCheck);
+  const usr = jwtUser({ token, type: "bearer" }, skipExpiryCheck);
+
+  if (usr) setUser(usr);
+
+  return usr;
 }
 
 function loadFromStorage(skipExpiryCheck: boolean): User | null {
