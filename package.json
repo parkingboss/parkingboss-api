@@ -38,7 +38,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@parkingboss/utils": "^0.10.1",
+    "@parkingboss/utils": "^0.10.2",
     "date-fns": "^2.10.0",
     "jwt-decode": "^2.2.0",
     "lodash-es": "^4.17.15",
