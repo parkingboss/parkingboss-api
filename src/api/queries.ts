@@ -174,7 +174,7 @@ function tenant(settings: ApiSettings, propertyId: string, id: string, query: Te
 }
 
 function property(settings: ApiSettings, propertyId: string, query: PropertyQuery): Promise<PropertyPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, true, 'locations', 'addresses');
+  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, false, 'locations', 'addresses');
 }
 
 function properties(settings: ApiSettings, query: PropertiesQuery): Promise<PropertiesPayload> {
