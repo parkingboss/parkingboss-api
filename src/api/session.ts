@@ -58,7 +58,7 @@ function userStore(settings: ApiSettings) {
 
 async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string | true, password?: string) {
   if (email === true) {
-    window.location.href = urls.navigate();
+    window.location.href = urls.build({ login: true });
     return;
   }
 
@@ -90,7 +90,7 @@ function isLoggedIn(settings: ApiSettings) {
 
 async function logOut(setUser: UserUpdater, skipRedirect = false) {
   setUser(null);
-  if (!skipRedirect) window.location.href = urls.logOut;
+  if (!skipRedirect) window.location.href = 'https://my.parkingboss.com/user/logout';
 }
 
 function renew (settings: ApiSettings, setUser: UserUpdater, password: string): Promise<void> {
