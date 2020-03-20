@@ -11,17 +11,17 @@ export interface ApiQueries {
   fetch(method: string, url: string, query?: Record<string, unknown>, body?: null | FormData | Blob, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
   get(url: string, query?: Record<string, unknown>, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
   post(url: string, query?: Record<string, unknown>, body?: FormData | Blob, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
-  authorizations(query: AuthorizationsQuery): Promise<AuthorizationsPayload>;
-  media(propertyId: string, id:string, query: MediaQuery): Promise<MediaPayload>;
-  medias(propertyId: string, query: MediasQuery): Promise<MediasPayload>;
-  permits(propertyId: string, query: PermitsQuery): Promise<PermitsPayload>;
-  tenant(propertyId: string, id: string, query: TenantQuery): Promise<TenantPayload>;
-  property(id: string, query: PropertyQuery): Promise<PropertyPayload>;
-  properties(query: PropertiesQuery): Promise<PropertiesPayload>;
-  space(propertyId: string, id: string, query: SpaceQuery): Promise<SpacePayload>;
-  spaces(propertyId: string, query: SpacesQuery): Promise<SpacesPayload>;
-  vehicle(propertyId: string, id: string, query: VehicleQuery): Promise<VehiclePayload>;
-  violations(propertyId: string, query: ViolationsQuery): Promise<ViolationsPayload>;
+  authorizations(query: AuthorizationsQuery, skipAuth?: boolean): Promise<AuthorizationsPayload>;
+  media(propertyId: string, id:string, query: MediaQuery, skipAuth?: boolean): Promise<MediaPayload>;
+  medias(propertyId: string, query: MediasQuery, skipAuth?: boolean): Promise<MediasPayload>;
+  permits(propertyId: string, query: PermitsQuery, skipAuth?: boolean): Promise<PermitsPayload>;
+  tenant(propertyId: string, id: string, query: TenantQuery, skipAuth?: boolean): Promise<TenantPayload>;
+  property(id: string, query: PropertyQuery, skipAuth?: boolean): Promise<PropertyPayload>;
+  properties(query: PropertiesQuery, skipAuth?: boolean): Promise<PropertiesPayload>;
+  space(propertyId: string, id: string, query: SpaceQuery, skipAuth?: boolean): Promise<SpacePayload>;
+  spaces(propertyId: string, query: SpacesQuery, skipAuth?: boolean): Promise<SpacesPayload>;
+  vehicle(propertyId: string, id: string, query: VehicleQuery, skipAuth?: boolean): Promise<VehiclePayload>;
+  violations(propertyId: string, query: ViolationsQuery, skipAuth?: boolean): Promise<ViolationsPayload>;
 }
 
 export function queries(settings: ApiSettings): ApiQueries {
@@ -153,46 +153,46 @@ async function apiFetch(
   }
 }
 
-function authorizations(settings: ApiSettings, query: AuthorizationsQuery): Promise<AuthorizationsPayload> {
-  return apiFetch(settings, 'GET', `/authorizations`, null, query, true, 'authorizations', 'users');
+function authorizations(settings: ApiSettings, query: AuthorizationsQuery, skipAuth: boolean = false): Promise<AuthorizationsPayload> {
+  return apiFetch(settings, 'GET', `/authorizations`, null, query, !skipAuth, 'authorizations', 'users');
 }
 
-function media(settings: ApiSettings, propertyId: string, id: string, query: MediaQuery): Promise<MediaPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/media/${id}}`, null, query, true, 'media', 'locations');
+function media(settings: ApiSettings, propertyId: string, id: string, query: MediaQuery, skipAuth: boolean = false): Promise<MediaPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/media/${id}}`, null, query, !skipAuth, 'media', 'locations');
 }
 
-function medias(settings: ApiSettings, propertyId: string, query: MediasQuery): Promise<MediasPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/media`, null, query, true, 'media', 'locations');
+function medias(settings: ApiSettings, propertyId: string, query: MediasQuery, skipAuth: boolean = false): Promise<MediasPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/media`, null, query, !skipAuth, 'media', 'locations');
 }
 
-function permits(settings: ApiSettings, propertyId: string, query: PermitsQuery): Promise<PermitsPayload> {
+function permits(settings: ApiSettings, propertyId: string, query: PermitsQuery, skipAuth: boolean = false): Promise<PermitsPayload> {
   return apiFetch(settings, 'GET', `/permits`, null, Object.assign({ scope: propertyId }, query), true, 'notes', 'contacts');
 }
 
-function tenant(settings: ApiSettings, propertyId: string, id: string, query: TenantQuery): Promise<TenantPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/tenants/${id}`, null, query, true, 'tenants', 'locations');
+function tenant(settings: ApiSettings, propertyId: string, id: string, query: TenantQuery, skipAuth: boolean = false): Promise<TenantPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/tenants/${id}`, null, query, !skipAuth, 'tenants', 'locations');
 }
 
-function property(settings: ApiSettings, propertyId: string, query: PropertyQuery): Promise<PropertyPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, false, 'locations', 'addresses');
+function property(settings: ApiSettings, propertyId: string, query: PropertyQuery, skipAuth: boolean = true): Promise<PropertyPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, !skipAuth, 'locations', 'addresses');
 }
 
-function properties(settings: ApiSettings, query: PropertiesQuery): Promise<PropertiesPayload> {
-  return apiFetch(settings, 'GET', `/locations`, null, query, true, 'locations', 'addresses');
+function properties(settings: ApiSettings, query: PropertiesQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
+  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'locations', 'addresses');
 }
 
-function space(settings: ApiSettings, propertyId: string, id: string, query: SpaceQuery): Promise<SpacePayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/spaces/${id}`, null, query, true, 'spaces', 'locations');
+function space(settings: ApiSettings, propertyId: string, id: string, query: SpaceQuery, skipAuth: boolean = false): Promise<SpacePayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/spaces/${id}`, null, query, !skipAuth, 'spaces', 'locations');
 }
 
-function spaces(settings: ApiSettings, propertyId: string, query: SpacesQuery): Promise<SpacesPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/spaces`, null, query, true, 'spaces', 'locations');
+function spaces(settings: ApiSettings, propertyId: string, query: SpacesQuery, skipAuth: boolean = false): Promise<SpacesPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/spaces`, null, query, !skipAuth, 'spaces', 'locations');
 }
 
-function vehicle(settings: ApiSettings, propertyId: string, id: string, query: VehicleQuery): Promise<VehiclePayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/vehicles/${id}`, null, query, true, 'vehicles', 'locations');
+function vehicle(settings: ApiSettings, propertyId: string, id: string, query: VehicleQuery, skipAuth: boolean = false): Promise<VehiclePayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/vehicles/${id}`, null, query, !skipAuth, 'vehicles', 'locations');
 }
 
-function violations(settings: ApiSettings, propertyId: string, query: ViolationsQuery): Promise<ViolationsPayload> {
-  return apiFetch(settings, 'GET', `/violations`, null, Object.assign({ scope: propertyId }, query), true, 'authorizations', 'users');
+function violations(settings: ApiSettings, propertyId: string, query: ViolationsQuery, skipAuth: boolean = false): Promise<ViolationsPayload> {
+  return apiFetch(settings, 'GET', `/violations`, null, Object.assign({ scope: propertyId }, query), !skipAuth, 'authorizations', 'users');
 }
