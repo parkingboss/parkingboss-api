@@ -50,3 +50,6 @@ export type VehicleQuery = Query & {
 export type ViolationsQuery = Query & {
   issued?: IntervalQuery;
 };
+
+export type UsersQuery = Query & {
+};
