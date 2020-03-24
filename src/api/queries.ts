@@ -181,7 +181,7 @@ function property(settings: ApiSettings, propertyId: string, query: PropertyQuer
 }
 
 function properties(settings: ApiSettings, query: PropertiesQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
-  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'locations', 'addresses', 'photos');
+  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'locations', 'addresses');
 }
 
 function space(settings: ApiSettings, propertyId: string, id: string, query: SpaceQuery, skipAuth: boolean = false): Promise<SpacePayload> {
