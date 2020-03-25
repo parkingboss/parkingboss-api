@@ -208,5 +208,5 @@ function users(settings: ApiSettings, userId: string, query: UsersQuery, skipAut
 }
 
 function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, skipAuth: boolean = false): Promise<UnitsPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/units`, null, query, !skipAuth);
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/units`, null, query, !skipAuth, 'locations', 'units');
 }
