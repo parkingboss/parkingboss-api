@@ -55,3 +55,6 @@ export type ViolationsQuery = Query & {
 
 export type UsersQuery = Query & {
 };
+
+export type UnitsQuery = Query & {
+};
