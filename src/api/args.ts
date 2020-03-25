@@ -1,3 +1,5 @@
+import { Interval } from '../time';
+
 export type Query = { [key: string]: unknown } & { viewpoint?: string | Date };
 
 type IntervalQuery = string | Interval;
