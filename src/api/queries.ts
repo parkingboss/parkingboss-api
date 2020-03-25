@@ -1,12 +1,13 @@
 import { ApiSettings } from './index';
 import { User } from './loadUser';
-import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery } from './args';
+import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery } from './args';
 import { AuthorizationsPayload, MediaPayload, MediasPayload, PermitsPayload, TenantPayload, PropertyPayload, PropertiesPayload, SpacePayload, SpacesPayload, VehiclePayload, ViolationsPayload } from './payloads';
 
 import { isInterval, intervalString } from '../time';
 import { modernize } from './modernize';
 import { normalize } from './normalize';
 import { UsersPayload } from './payloads/UsersPayload';
+import { UnitsPayload } from './payloads/UnitsPayload';
 
 export interface ApiQueries {
   fetch(method: string, url: string, query?: Record<string, unknown>, body?: null | FormData | Blob, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
@@ -24,6 +25,7 @@ export interface ApiQueries {
   vehicle(propertyId: string, id: string, query: VehicleQuery, skipAuth?: boolean): Promise<VehiclePayload>;
   violations(propertyId: string, query: ViolationsQuery, skipAuth?: boolean): Promise<ViolationsPayload>;
   users(userId: string, query: UsersQuery, skipAuth?: boolean): Promise<UsersPayload>;
+  units(propertyId: string, query: UnitsQuery, skipAuth?: boolean): Promise<UnitsPayload>;
 }
 
 export function queries(settings: ApiSettings): ApiQueries {
@@ -43,6 +45,7 @@ export function queries(settings: ApiSettings): ApiQueries {
     vehicle: (propertyId: string, id: string, query: VehicleQuery) => vehicle(settings, propertyId, id, query),
     violations: (propertyId: string, query: ViolationsQuery) => violations(settings, propertyId, query),
     users: (userId: string, query: UsersQuery) => users(settings, userId, query),
+    units: (propertyId: string, query: UnitsQuery) => units(settings, propertyId, query),
   };
 }
 
@@ -202,4 +205,8 @@ function violations(settings: ApiSettings, propertyId: string, query: Violations
 
 function users(settings: ApiSettings, userId: string, query: UsersQuery, skipAuth: boolean = false): Promise<UsersPayload> {
   return apiFetch(settings, 'GET', `/users/${userId}`, null, query, !skipAuth, 'users');
+}
+
+function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, skipAuth: boolean = false): Promise<UnitsPayload> {
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/units`, null, query, !skipAuth);
 }
