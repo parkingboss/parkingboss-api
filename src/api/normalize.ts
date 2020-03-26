@@ -4,7 +4,7 @@ function itemsToArrays(json: any) {
   each(json, (val) => {
     if (!val) return;
     if (val.items) {
-      val.items = Object.keys(val.items).map(id => json.items[id]);
+      val.items = Object.values(val.items).map((id) => json.items[id as string]);
     }
     if (val.item) {
       val.item = json.items[val.item];
