@@ -1,6 +1,6 @@
 import { ApiSettings } from './index';
 import { User } from './loadUser';
-import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery } from './args';
+import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery, GeoPropertyQuery } from './args';
 import { AuthorizationsPayload, MediaPayload, MediasPayload, PermitsPayload, TenantPayload, PropertyPayload, PropertiesPayload, SpacePayload, SpacesPayload, VehiclePayload, ViolationsPayload } from './payloads';
 
 import { isInterval, intervalString } from '../time';
@@ -19,6 +19,7 @@ export interface ApiQueries {
   permits(propertyId: string, query: PermitsQuery, skipAuth?: boolean): Promise<PermitsPayload>;
   tenant(propertyId: string, id: string, query: TenantQuery, skipAuth?: boolean): Promise<TenantPayload>;
   property(id: string, query: PropertyQuery, skipAuth?: boolean): Promise<PropertyPayload>;
+  geoProperties(coords: [number, number] | { lon: number, lat: number }, query: GeoPropertyQuery, skipAuth?: boolean): Promise<PropertiesPayload>;
   properties(query: PropertiesQuery, skipAuth?: boolean): Promise<PropertiesPayload>;
   space(propertyId: string, id: string, query: SpaceQuery, skipAuth?: boolean): Promise<SpacePayload>;
   spaces(propertyId: string, query: SpacesQuery, skipAuth?: boolean): Promise<SpacesPayload>;
@@ -33,19 +34,20 @@ export function queries(settings: ApiSettings): ApiQueries {
     fetch: (method: string, url: string, query: Record<string, unknown> = {}, body: null | FormData | Blob = null, useAuthHeader: boolean = true) => apiFetch(settings, method, url, body, query, useAuthHeader),
     get: (url: string, query: Record<string, unknown> = {}, useAuthHeader: boolean = true) => apiFetch(settings, 'GET', url, null, query, useAuthHeader),
     post: (url: string, query: Record<string, unknown> = {}, body: null | FormData | Blob = null, useAuthHeader: boolean = true) => apiFetch(settings, 'POST', url, body, query, useAuthHeader),
-    authorizations: (query: AuthorizationsQuery) => authorizations(settings, query),
-    media: (propertyId: string, id: string, query: MediaQuery) => media(settings, propertyId, id, query),
-    medias: (propertyId: string, query: MediasQuery) => medias(settings, propertyId, query),
-    permits: (propertyId: string, query: PermitsQuery) => permits(settings, propertyId, query),
-    tenant: (propertyId: string, id: string, query: TenantQuery) => tenant(settings, propertyId, id, query),
-    property: (id: string, query: PropertyQuery) => property(settings, id, query),
-    properties: (query: PropertiesQuery) => properties(settings, query),
-    space: (propertyId: string, id: string, query: SpaceQuery) => space(settings, propertyId, id, query),
-    spaces: (propertyId: string, query: SpacesQuery) => spaces(settings, propertyId, query),
-    vehicle: (propertyId: string, id: string, query: VehicleQuery) => vehicle(settings, propertyId, id, query),
-    violations: (propertyId: string, query: ViolationsQuery) => violations(settings, propertyId, query),
-    users: (userId: string, query: UsersQuery) => users(settings, userId, query),
-    units: (propertyId: string, query: UnitsQuery) => units(settings, propertyId, query),
+    authorizations: (query: AuthorizationsQuery, skipAuth: boolean = false) => authorizations(settings, query, skipAuth),
+    media: (propertyId: string, id: string, query: MediaQuery, skipAuth: boolean = false) => media(settings, propertyId, id, query, skipAuth),
+    medias: (propertyId: string, query: MediasQuery, skipAuth: boolean = false) => medias(settings, propertyId, query, skipAuth),
+    permits: (propertyId: string, query: PermitsQuery, skipAuth: boolean = false) => permits(settings, propertyId, query, skipAuth),
+    tenant: (propertyId: string, id: string, query: TenantQuery, skipAuth: boolean = false) => tenant(settings, propertyId, id, query, skipAuth),
+    property: (id: string, query: PropertyQuery, skipAuth: boolean = false) => property(settings, id, query, skipAuth),
+    geoProperties: (coords: [number, number] | { lon: number, lat: number }, query: GeoPropertyQuery, skipAuth: boolean = true) => geoProperties(settings, coords, query, skipAuth),
+    properties: (query: PropertiesQuery, skipAuth: boolean = false) => properties(settings, query, skipAuth),
+    space: (propertyId: string, id: string, query: SpaceQuery, skipAuth: boolean = false) => space(settings, propertyId, id, query, skipAuth),
+    spaces: (propertyId: string, query: SpacesQuery, skipAuth: boolean = false) => spaces(settings, propertyId, query, skipAuth),
+    vehicle: (propertyId: string, id: string, query: VehicleQuery, skipAuth: boolean = false) => vehicle(settings, propertyId, id, query, skipAuth),
+    violations: (propertyId: string, query: ViolationsQuery, skipAuth: boolean = false) => violations(settings, propertyId, query, skipAuth),
+    users: (userId: string, query: UsersQuery, skipAuth: boolean = false) => users(settings, userId, query, skipAuth),
+    units: (propertyId: string, query: UnitsQuery, skipAuth: boolean = false) => units(settings, propertyId, query, skipAuth),
   };
 }
 
@@ -183,8 +185,13 @@ function property(settings: ApiSettings, propertyId: string, query: PropertyQuer
   return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, !skipAuth, 'locations', 'addresses');
 }
 
+function geoProperties(settings: ApiSettings, coords: [number,number] | { lat: number, lon: number }, query: GeoPropertyQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
+  const coordId = Array.isArray(coords) ? coords.join(',') : `${coords.lon},${coords.lat}`;
+  return apiFetch(settings, 'GET', `/locations/${coordId}`, null, query, !skipAuth, 'addresses');
+}
+
 function properties(settings: ApiSettings, query: PropertiesQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
-  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'locations', 'addresses');
+  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'addresses');
 }
 
 function space(settings: ApiSettings, propertyId: string, id: string, query: SpaceQuery, skipAuth: boolean = false): Promise<SpacePayload> {

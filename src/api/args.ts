@@ -32,6 +32,11 @@ export type TenantQuery = Query & {
 export type PropertyQuery = Query & {
 };
 
+export type GeoPropertyQuery = Query & {
+  principal?: string;
+  photos?: true;
+}
+
 export type PropertiesQuery = Query & {
   principal?: string;
   photos?: true;
