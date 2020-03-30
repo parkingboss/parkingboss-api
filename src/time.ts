@@ -73,7 +73,7 @@ export function intervalString(interval: Interval) {
 export function interval(from: number | null, to: number | null, now?: Date): Interval {
   now = now || new Date();
   return {
-    start: from ? addDays(now, from) : undefined,
-    end: to ? addDays(now, to) : undefined,
+    start: from == null ? undefined : addDays(now, from),
+    end: to == null ? undefined : addDays(now, to)
   };
 }
