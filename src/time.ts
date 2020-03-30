@@ -1,4 +1,4 @@
-import { isAfter, isWithinInterval, isBefore } from 'date-fns';
+import { isAfter, isWithinInterval, addDays } from 'date-fns';
 import { Valid } from './api/payloads/Valid';
 
 export interface Interval {
@@ -68,4 +68,12 @@ export function intervalString(interval: Interval) {
   const endStr = end ? end.toISOString() : "";
 
   return `${startStr}/${endStr}`;
+}
+
+export function interval(from: number | null, to: number | null, now?: Date): Interval {
+  now = now || new Date();
+  return {
+    start: from ? addDays(now, from) : undefined,
+    end: to ? addDays(now, to) : undefined,
+  };
 }
