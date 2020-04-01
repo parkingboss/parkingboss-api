@@ -1,13 +1,11 @@
 import { ApiSettings } from './index';
 import { User } from './loadUser';
-import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery, GeoPropertyQuery } from './args';
-import { AuthorizationsPayload, MediaPayload, MediasPayload, PermitsPayload, TenantPayload, PropertyPayload, PropertiesPayload, SpacePayload, SpacesPayload, VehiclePayload, ViolationsPayload } from './payloads';
+import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery, GeoPropertyQuery, ObservePlateQuery } from './args';
+import { AuthorizationsPayload, MediaPayload, MediasPayload, PermitsPayload, TenantPayload, PropertyPayload, PropertiesPayload, SpacePayload, SpacesPayload, VehiclePayload, ViolationsPayload, UsersPayload, UnitsPayload, ObservePlatePayload } from './payloads';
 
 import { isInterval, intervalString } from '../time';
 import { modernize } from './modernize';
 import { normalize } from './normalize';
-import { UsersPayload } from './payloads/UsersPayload';
-import { UnitsPayload } from './payloads/UnitsPayload';
 
 export interface ApiQueries {
   fetch(method: string, url: string, query?: Record<string, unknown>, body?: null | FormData | Blob, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
@@ -27,6 +25,7 @@ export interface ApiQueries {
   violations(propertyId: string, query: ViolationsQuery, skipAuth?: boolean): Promise<ViolationsPayload>;
   users(userId: string, query: UsersQuery, skipAuth?: boolean): Promise<UsersPayload>;
   units(propertyId: string, query: UnitsQuery, skipAuth?: boolean): Promise<UnitsPayload>;
+  observePlate(frame: Blob, query: ObservePlateQuery, skipAuth?: boolean): Promise<ObservePlatePayload>;
 }
 
 export function queries(settings: ApiSettings): ApiQueries {
@@ -48,6 +47,7 @@ export function queries(settings: ApiSettings): ApiQueries {
     violations: (propertyId: string, query: ViolationsQuery, skipAuth: boolean = false) => violations(settings, propertyId, query, skipAuth),
     users: (userId: string, query: UsersQuery, skipAuth: boolean = false) => users(settings, userId, query, skipAuth),
     units: (propertyId: string, query: UnitsQuery, skipAuth: boolean = false) => units(settings, propertyId, query, skipAuth),
+    observePlate: (frame: Blob, query: ObservePlateQuery, skipAuth = false) => observePlate(settings, frame, query, skipAuth);
   };
 }
 
@@ -216,4 +216,8 @@ function users(settings: ApiSettings, userId: string, query: UsersQuery, skipAut
 
 function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, skipAuth: boolean = false): Promise<UnitsPayload> {
   return apiFetch(settings, 'GET', `/locations/${propertyId}/units`, null, query, !skipAuth, 'locations', 'units');
+}
+
+function observePlate(settings: ApiSettings, frame: Blob, query: ObservePlateQuery, skipAuth: boolean = false): Promise<ObservePlateQuery> {
+  return apiFetch(settings, 'POST', '/observations', frame, query, !skipAuth);
 }
