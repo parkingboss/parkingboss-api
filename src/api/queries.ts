@@ -207,7 +207,7 @@ function vehicle(settings: ApiSettings, propertyId: string, id: string, query: V
 }
 
 function violations(settings: ApiSettings, propertyId: string, query: ViolationsQuery, skipAuth: boolean = false): Promise<ViolationsPayload> {
-  return apiFetch(settings, 'GET', `/violations`, null, Object.assign({ scope: propertyId }, query), !skipAuth, 'authorizations', 'users');
+  return apiFetch(settings, 'GET', `/violations`, null, Object.assign({ scope: propertyId }, query), !skipAuth, 'notes');
 }
 
 function users(settings: ApiSettings, userId: string, query: UsersQuery, skipAuth: boolean = false): Promise<UsersPayload> {
