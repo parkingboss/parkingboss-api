@@ -1,6 +1,6 @@
 import { ApiSettings } from './index';
 import { User } from './loadUser';
-import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery, GeoPropertyQuery } from './args';
+import { AuthorizationsQuery, MediaQuery, MediasQuery, PermitsQuery, TenantQuery, PropertyQuery, PropertiesQuery, SpaceQuery, SpacesQuery, VehicleQuery, ViolationsQuery, Query, UsersQuery, UnitsQuery, GeoPropertyQuery, TenantsQuery } from './args';
 import { AuthorizationsPayload, MediaPayload, MediasPayload, PermitsPayload, TenantPayload, PropertyPayload, PropertiesPayload, SpacePayload, SpacesPayload, VehiclePayload, ViolationsPayload } from './payloads';
 
 import { isInterval, intervalString } from '../time';
@@ -8,6 +8,7 @@ import { modernize } from './modernize';
 import { normalize } from './normalize';
 import { UsersPayload } from './payloads/UsersPayload';
 import { UnitsPayload } from './payloads/UnitsPayload';
+import { TenantsPayload } from './payloads/TenantsPayload';
 
 export interface ApiQueries {
   fetch(method: string, url: string, query?: Record<string, unknown>, body?: null | FormData | Blob, useAuthHeader?: boolean): Promise<Record<string, unknown>>;
@@ -18,6 +19,7 @@ export interface ApiQueries {
   medias(propertyId: string, query: MediasQuery, skipAuth?: boolean): Promise<MediasPayload>;
   permits(propertyId: string, query: PermitsQuery, skipAuth?: boolean): Promise<PermitsPayload>;
   tenant(propertyId: string, id: string, query: TenantQuery, skipAuth?: boolean): Promise<TenantPayload>;
+  tenants(query: TenantsQuery, skipAuth?: boolean): Promise<TenantsPayload>;
   property(id: string, query: PropertyQuery, skipAuth?: boolean): Promise<PropertyPayload>;
   geoProperties(coords: [number, number] | { lon: number, lat: number }, query: GeoPropertyQuery, skipAuth?: boolean): Promise<PropertiesPayload>;
   properties(query: PropertiesQuery, skipAuth?: boolean): Promise<PropertiesPayload>;
@@ -39,6 +41,7 @@ export function queries(settings: ApiSettings): ApiQueries {
     medias: (propertyId: string, query: MediasQuery, skipAuth: boolean = false) => medias(settings, propertyId, query, skipAuth),
     permits: (propertyId: string, query: PermitsQuery, skipAuth: boolean = false) => permits(settings, propertyId, query, skipAuth),
     tenant: (propertyId: string, id: string, query: TenantQuery, skipAuth: boolean = false) => tenant(settings, propertyId, id, query, skipAuth),
+    tenants: (query: TenantsQuery, skipAuth: boolean = false) => tenants(settings, query, skipAuth),
     property: (id: string, query: PropertyQuery, skipAuth: boolean = false) => property(settings, id, query, skipAuth),
     geoProperties: (coords: [number, number] | { lon: number, lat: number }, query: GeoPropertyQuery, skipAuth: boolean = true) => geoProperties(settings, coords, query, skipAuth),
     properties: (query: PropertiesQuery, skipAuth: boolean = false) => properties(settings, query, skipAuth),
@@ -179,6 +182,10 @@ function permits(settings: ApiSettings, propertyId: string, query: PermitsQuery,
 
 function tenant(settings: ApiSettings, propertyId: string, id: string, query: TenantQuery, skipAuth: boolean = false): Promise<TenantPayload> {
   return apiFetch(settings, 'GET', `/locations/${propertyId}/tenants/${id}`, null, query, !skipAuth, 'tenants', 'locations');
+}
+
+function tenants(settings: ApiSettings, query: TenantsQuery, skipAuth: boolean = false): Promise<TenantsPayload> {
+  return apiFetch(settings, 'GET', '/units/tenants', null, query, !skipAuth, 'units', 'tenants');
 }
 
 function property(settings: ApiSettings, propertyId: string, query: PropertyQuery, skipAuth: boolean = true): Promise<PropertyPayload> {

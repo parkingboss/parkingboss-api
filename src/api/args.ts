@@ -29,6 +29,11 @@ export type TenantQuery = Query & {
   valid: IntervalQuery;
 };
 
+export type TenantsQuery = Query & {
+  scope: string;
+  valid: IntervalQuery;
+};
+
 export type PropertyQuery = Query & {
 };
 
