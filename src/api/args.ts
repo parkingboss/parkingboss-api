@@ -63,3 +63,13 @@ export type UsersQuery = Query & {
 
 export type UnitsQuery = Query & {
 };
+
+export type ObservePlateQuery = Query & {
+  scope?: string;
+  alpr?: 'openalpr' | 'sighthound' | 'platerecog';
+  method?: 'scanner';
+  filename: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+}
