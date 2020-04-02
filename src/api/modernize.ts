@@ -1,4 +1,4 @@
-import { get, set, each, fromPairs, toPairs } from 'lodash-es';
+import { get, set, unset, each, fromPairs, toPairs } from 'lodash-es';
 
 // TODO: This works. It'd be better if we added types. Maybe.
 //       Reevaluate if it becomes an issue
@@ -32,12 +32,19 @@ function modernizeAttachmentType(json: any, collection: any) {
     if (!val.type) return true;
     const parentId = getParentId(val, path[path.length - 2], json)
 
+    let oldId = null;
     if (val.id === val.subject || (parentId === 'items' && get(json, ['items', val.id]).id)) {
+      oldId = val.id;
       val.id = `${val.id}-${val.type}`;
     }
     set(json, ['items', val.id], val);
     if (parentId !== 'items') {
       set(json, ['attachments', 'items', parentId, val.id], val.type);
+      if (oldId) {
+        unset(json, ['attachments', 'items', parentId, oldId]);
+        unset(json, [collection, 'items', oldId]);
+        set(json, [collection, 'items', val.id], val);
+      }
     }
   });
 }
