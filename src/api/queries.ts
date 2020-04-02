@@ -47,7 +47,7 @@ export function queries(settings: ApiSettings): ApiQueries {
     violations: (propertyId: string, query: ViolationsQuery, skipAuth: boolean = false) => violations(settings, propertyId, query, skipAuth),
     users: (userId: string, query: UsersQuery, skipAuth: boolean = false) => users(settings, userId, query, skipAuth),
     units: (propertyId: string, query: UnitsQuery, skipAuth: boolean = false) => units(settings, propertyId, query, skipAuth),
-    observePlate: (frame: Blob, query: ObservePlateQuery, skipAuth = false) => observePlate(settings, frame, query, skipAuth);
+    observePlate: (frame: Blob, query: ObservePlateQuery, skipAuth = false) => observePlate(settings, frame, query, skipAuth),
   };
 }
 
@@ -219,5 +219,8 @@ function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, ski
 }
 
 function observePlate(settings: ApiSettings, frame: Blob, query: ObservePlateQuery, skipAuth: boolean = false): Promise<ObservePlateQuery> {
-  return apiFetch(settings, 'POST', '/observations', frame, query, !skipAuth);
+  const formData = new FormData();
+  formData.append('file', frame, query.filename);
+  delete query.filename;
+  return apiFetch(settings, 'POST', '/observations', formData, query, !skipAuth);
 }
