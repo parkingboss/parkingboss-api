@@ -12,3 +12,7 @@ export * from './SpacePayload';
 export * from './SpacesPayload';
 export * from './VehiclePayload';
 export * from './ViolationsPayload';
+export * from './UnitsPayload';
+export * from './UsersPayload';
+export * from './ObservePlatePayload';
+export * from './TenantsPayload';
