@@ -14,6 +14,9 @@ function intervalMin(valid: Valid): undefined | Date {
   } else if (valid.interval && valid.interval.split) {
     let val = valid.interval.split('/')[0];
     if (val) return new Date(val);
+  } else if (valid.utc && valid.utc.split) {
+    let val = valid.utc.split('/')[0];
+    if (val) return new Date(val);
   }
 }
 
@@ -24,6 +27,9 @@ function intervalMax(valid: Valid): undefined | Date {
     return new Date(typeof valid.max === 'string' ? valid.max : valid.max.utc);
   } else if (valid.interval && valid.interval.split) {
     let val = valid.interval.split('/')[1];
+    if (val) return new Date(val);
+  } else if (valid.utc && valid.utc.split) {
+    let val = valid.utc.split('/')[1];
     if (val) return new Date(val);
   }
 }

@@ -185,7 +185,7 @@ function tenant(settings: ApiSettings, propertyId: string, id: string, query: Te
 }
 
 function tenants(settings: ApiSettings, query: TenantsQuery, skipAuth: boolean = false): Promise<TenantsPayload> {
-  return apiFetch(settings, 'GET', '/units/tenants', null, query, !skipAuth, 'units', 'tenants');
+  return apiFetch(settings, 'GET', '/units/tenants', null, query, !skipAuth);
 }
 
 function property(settings: ApiSettings, propertyId: string, query: PropertyQuery, skipAuth: boolean = true): Promise<PropertyPayload> {
