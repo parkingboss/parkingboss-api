@@ -172,7 +172,7 @@ function media(settings: ApiSettings, propertyId: string, id: string, query: Med
 }
 
 function medias(settings: ApiSettings, propertyId: string, query: MediasQuery, skipAuth: boolean = false): Promise<MediasPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/media`, null, query, !skipAuth, 'media', 'locations');
+  return apiFetch(settings, 'GET', `/media?scope=${propertyId}`, null, query, !skipAuth);
 }
 
 function permits(settings: ApiSettings, propertyId: string, query: PermitsQuery, skipAuth: boolean = false): Promise<PermitsPayload> {
