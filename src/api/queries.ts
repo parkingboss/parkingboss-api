@@ -164,7 +164,7 @@ async function apiFetch(
 }
 
 function authorizations(settings: ApiSettings, query: AuthorizationsQuery, skipAuth: boolean = false): Promise<AuthorizationsPayload> {
-  return apiFetch(settings, 'GET', `/authorizations`, null, query, !skipAuth, 'authorizations', 'users');
+  return apiFetch(settings, 'GET', `/authorizations`, null, query, !skipAuth);
 }
 
 function media(settings: ApiSettings, propertyId: string, id: string, query: MediaQuery, skipAuth: boolean = false): Promise<MediaPayload> {
@@ -188,16 +188,16 @@ function tenants(settings: ApiSettings, query: TenantsQuery, skipAuth: boolean =
 }
 
 function property(settings: ApiSettings, propertyId: string, query: PropertyQuery, skipAuth: boolean = true): Promise<PropertyPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, !skipAuth, 'locations', 'addresses');
+  return apiFetch(settings, 'GET', `/locations/${propertyId}`, null, query, !skipAuth);
 }
 
 function geoProperties(settings: ApiSettings, coords: [number,number] | { lat: number, lon: number }, query: GeoPropertyQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
   const coordId = Array.isArray(coords) ? coords.join(',') : `${coords.lon},${coords.lat}`;
-  return apiFetch(settings, 'GET', `/locations/${coordId}`, null, query, !skipAuth, 'addresses');
+  return apiFetch(settings, 'GET', `/locations/${coordId}`, null, query, !skipAuth);
 }
 
 function properties(settings: ApiSettings, query: PropertiesQuery, skipAuth: boolean = false): Promise<PropertiesPayload> {
-  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth, 'addresses');
+  return apiFetch(settings, 'GET', `/locations`, null, query, !skipAuth);
 }
 
 function space(settings: ApiSettings, propertyId: string, id: string, query: SpaceQuery, skipAuth: boolean = false): Promise<SpacePayload> {
@@ -205,7 +205,7 @@ function space(settings: ApiSettings, propertyId: string, id: string, query: Spa
 }
 
 function spaces(settings: ApiSettings, propertyId: string, query: SpacesQuery, skipAuth: boolean = false): Promise<SpacesPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/spaces`, null, query, !skipAuth, 'spaces', 'locations');
+  return apiFetch(settings, 'GET', `/spaces?scope=${propertyId}`, null, query, !skipAuth);
 }
 
 function vehicle(settings: ApiSettings, propertyId: string, id: string, query: VehicleQuery, skipAuth: boolean = false): Promise<VehiclePayload> {
@@ -217,11 +217,11 @@ function violations(settings: ApiSettings, propertyId: string, query: Violations
 }
 
 function users(settings: ApiSettings, userId: string, query: UsersQuery, skipAuth: boolean = false): Promise<UsersPayload> {
-  return apiFetch(settings, 'GET', `/users/${userId}`, null, query, !skipAuth, 'users');
+  return apiFetch(settings, 'GET', `/users/${userId}`, null, query, !skipAuth);
 }
 
 function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, skipAuth: boolean = false): Promise<UnitsPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/units`, null, query, !skipAuth, 'locations', 'units');
+  return apiFetch(settings, 'GET', `/units?scope=${propertyId}`, null, query, !skipAuth);
 }
 
 function observePlate(settings: ApiSettings, frame: Blob, query: ObservePlateQuery, skipAuth: boolean = false): Promise<ObservePlateQuery> {
