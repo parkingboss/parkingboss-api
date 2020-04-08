@@ -168,7 +168,7 @@ function authorizations(settings: ApiSettings, query: AuthorizationsQuery, skipA
 }
 
 function media(settings: ApiSettings, propertyId: string, id: string, query: MediaQuery, skipAuth: boolean = false): Promise<MediaPayload> {
-  return apiFetch(settings, 'GET', `/locations/${propertyId}/media/${id}}`, null, query, !skipAuth, 'media', 'locations');
+  return apiFetch(settings, 'GET', `/locations/${propertyId}/media/${id}}`, null, query, !skipAuth);
 }
 
 function medias(settings: ApiSettings, propertyId: string, query: MediasQuery, skipAuth: boolean = false): Promise<MediasPayload> {
