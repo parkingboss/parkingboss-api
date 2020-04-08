@@ -13,7 +13,7 @@ export type ItemAttachments = Record<IdString, TypeString>;
 export type Items = Record<IdString, Item>;
 export type Attachments = Record<IdString, ItemAttachments>;
 
-export interface Payload {
+export interface Payload  {
   generated: string;
   server: string;
   viewpoint: string;

@@ -1,2 +1,4 @@
-export interface TenantsPayload {
+import { Payload } from './Payload';
+
+export interface TenantsPayload extends Payload {
 }

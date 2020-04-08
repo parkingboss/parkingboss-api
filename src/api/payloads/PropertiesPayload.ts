@@ -1,4 +1,6 @@
-export interface PropertiesPayload {
+import { Payload } from './Payload';
+
+export interface PropertiesPayload extends Payload {
   locations: {
     count: number;
     items: Record<string, string>;
