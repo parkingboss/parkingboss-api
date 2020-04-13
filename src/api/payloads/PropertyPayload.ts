@@ -1,11 +1,7 @@
 export interface PropertyPayload {
-  locations: {
+  properties: {
     item?: string;
     items: Record<string, string>;
   };
 
-  addresses: {
-    item?: string;
-    items: Record<string, string>;
-  };
 }
