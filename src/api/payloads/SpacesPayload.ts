@@ -1,4 +1,6 @@
-export interface SpacesPayload {
+import { Payload } from './Payload';
+
+export interface SpacesPayload extends Payload {
   locations: {
     item?: string;
     items: Record<string, string>;

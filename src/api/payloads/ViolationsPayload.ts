@@ -1,4 +1,6 @@
-export interface ViolationsPayload {
+import { Payload } from './Payload';
+
+export interface ViolationsPayload extends Payload {
   violations: {
     issued: { utc: string };
     valid: { utc: string };
