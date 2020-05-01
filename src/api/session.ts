@@ -15,6 +15,7 @@ export interface SessionControl {
   logIn(email: string, password: string): Promise<void>;
   logOut(skipRedirect?: boolean): void;
   renew(password: string): Promise<void>;
+  requestPasswordReset(password: string): Promise<any>;
 }
 
 export function session(settings: ApiSettings): SessionControl {
@@ -25,6 +26,7 @@ export function session(settings: ApiSettings): SessionControl {
     isLoggedIn: () => isLoggedIn(settings),
     logIn: (email: string | true, password?: string) => logIn(settings, user.set, email, password),
     renew: (password: string) => renew(settings, user.set, password),
+    requestPasswordReset: (email: string) => requestPasswordReset(settings, email),
     logOut: (skipRedirect?: boolean) => logOut(user.set, skipRedirect),
   });
 }
@@ -84,6 +86,21 @@ async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string 
   return responseBody;
 }
 
+async function requestPasswordReset(settings: ApiSettings, email: string) {
+  if (!email) throw new Error('Email must be provided.');
+
+  const url = new URL(settings.apiBase + '/auth/tokens/email');
+  url.searchParams.set('ts', new Date().toISOString());
+
+  const body = new FormData();
+  body.set('email', email);
+
+  const result = await self.fetch(url.toString(), { method: 'POST', body });
+  const responseBody = await result.json();
+
+  return responseBody;
+}
+
 function isLoggedIn(settings: ApiSettings) {
   return !!settings.user;
 }
@@ -93,7 +110,7 @@ async function logOut(setUser: UserUpdater, skipRedirect = false) {
   if (!skipRedirect) window.location.href = 'https://my.parkingboss.com/user/logout';
 }
 
-function renew (settings: ApiSettings, setUser: UserUpdater, password: string): Promise<void> {
+function renew(settings: ApiSettings, setUser: UserUpdater, password: string): Promise<void> {
   if (!settings.user) {
     throw new Error("Use logIn. Cannot log in without current user data.");
   }
