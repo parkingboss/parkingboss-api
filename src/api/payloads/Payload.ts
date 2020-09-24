@@ -11,8 +11,10 @@ export interface Entity {
 export type Attachment = Record<IdString, TypeString>;
 
 export type Items<T> = Record<IdString, T>;
+export type ItemPayload<T extends Payload> = Record<string, T[keyof T]>;
 
-export type EntityItems = Items<Entity>;
+// Include all implementations of the Payload interface
+export type EntityItems = Items<Entity> & ItemPayload<any>;
 export type AttachmentItems = Items<Attachment>;
 
 export interface Attachments {
@@ -26,4 +28,5 @@ export interface Payload  {
   version?: string;
   items: EntityItems;
   attachments?: Attachments;
+  scope?: string;
 }
