@@ -6,6 +6,7 @@ export interface Entity {
   type: TypeString;
   generated?: string | Date;
   updated?: string | Date;
+  [key: string]: unknown;
 }
 
 export type Attachment = Record<IdString, TypeString>;
