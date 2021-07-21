@@ -1,8 +1,7 @@
-import { qs } from '@parkingboss/utils';
-import { apiBase } from './base';
-import { User } from './loadUser';
-import { session, SessionControl } from './session';
-import { queries, ApiQueries } from './queries';
+import { apiBase } from "./base";
+import { User } from "./loadUser";
+import { session, SessionControl } from "./session";
+import { queries, ApiQueries } from "./queries";
 
 export interface ApiOptions {
   client: string;
@@ -29,35 +28,34 @@ function optsToSettings(opts: ApiOptions): ApiSettings {
     client: opts.client,
     user: null,
     apiBase: opts.apiBase || "TEMP_FAKE",
-    skipNormalization: !!opts.skipNormalization
+    skipNormalization: !!opts.skipNormalization,
   };
   if (!opts.apiBase) {
     const watcher = apiBase();
-    watcher.subscribe(newBase => settings.apiBase = newBase);
+    watcher.subscribe((newBase) => (settings.apiBase = newBase));
   }
   return settings;
 }
 
 export function Api(opts: ApiOptions): Api {
   const settings = optsToSettings(opts);
-  const api = Object.assign({ settings },
-    session(settings),
-    queries(settings),
-  );
+  const api = Object.assign({ settings }, session(settings), queries(settings));
   if (!opts.skipUrlRewrite) {
-    self.history.replaceState(null, '', urlWithoutToken());
+    self.history.replaceState(null, "", urlWithoutToken());
   }
   return api;
 }
 
-const removables = [ 'token', 'access_token', 'accessToken' ];
+const removables = ["token", "access_token", "accessToken"];
 function urlWithoutToken(): string {
   const url = new URL(location.toString());
-  const hash = qs.parse(url.hash);
-  removables.forEach(key => {
-    url.searchParams.delete('token');
-    delete hash[key];
+
+  const hash = new URLSearchParams(url.hash.replace(/^#/, ""));
+  removables.forEach((key) => {
+    url.searchParams.delete(key);
+    hash.delete(key);
   });
-  url.hash = qs.stringify(hash);
+  url.hash = hash.toString();
+
   return url.toString();
 }

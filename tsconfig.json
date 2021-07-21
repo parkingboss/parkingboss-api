@@ -12,10 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist/es6", // Override in tsconfig.cjs.json
     "declaration": true,
-    "lib": [ "DOM", "ESNext" ]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "compileOnSave": true
 }

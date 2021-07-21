@@ -227,6 +227,9 @@ function units(settings: ApiSettings, propertyId: string, query: UnitsQuery, ski
 function observePlate(settings: ApiSettings, frame: Blob, query: ObservePlateQuery, skipAuth: boolean = false): Promise<ObservePlatePayload> {
   const formData = new FormData();
   formData.append('file', frame, query.filename);
-  delete query.filename;
-  return apiFetch(settings, 'POST', '/observations', formData, query, !skipAuth);
+  const withoutFn = {
+    ...query,
+    filename: undefined
+  };
+  return apiFetch(settings, 'POST', '/observations', formData, withoutFn, !skipAuth);
 }

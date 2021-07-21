@@ -1,6 +1,5 @@
-import { qs } from '@parkingboss/utils';
-import storage from 'store/dist/store.modern';
-import decodeJwt from 'jwt-decode';
+import storage from "store/dist/store.modern";
+import decodeJwt from "jwt-decode";
 
 interface Jwt {
   /* Official JWT elements: */
@@ -26,7 +25,7 @@ interface Jwt {
   /* JWT Extensions for Parking Boss: */
   // The encoded JWT Token.
   token: string;
-  type: 'bearer';
+  type: "bearer";
 
   // Email address for user.
   email: string;
@@ -60,11 +59,23 @@ export interface User extends Jwt {
 const AUTH_KEY = "user/auth";
 
 function loadFromUrl(skipExpiryCheck: boolean): User | null {
-  const source = Object.assign(
-    {},
-    qs.parse(self.location.search.substr(1)),
-    qs.parse(self.location.hash.substr(1)),
-  );
+  const url = new URL(location.toString());
+
+  const source = Array.from(url.searchParams.entries())
+    .concat(
+      Array.from(new URLSearchParams(url.hash.replace(/^#/, "")).entries())
+    )
+    .reduce(
+      (
+        acc: Record<string, string>,
+        item: [string, string]
+      ): Record<string, string> => {
+        acc[item[0]] = item[1];
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
   const token = source.access_token || source.token;
 
   if (!token) return null;
