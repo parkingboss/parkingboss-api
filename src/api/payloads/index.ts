@@ -5,6 +5,8 @@ export * from './AuthorizationsPayload';
 export * from './MediaPayload';
 export * from './MediasPayload';
 export * from './PermitsPayload';
+export * from './PoliciesPayload';
+export * from './PolicyPayload';
 export * from './TenantPayload';
 export * from './PropertyPayload';
 export * from './PropertiesPayload';
