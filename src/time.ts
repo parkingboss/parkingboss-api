@@ -1,5 +1,20 @@
-import { isAfter, isWithinInterval, addDays } from 'date-fns';
-import { Valid } from './api/payloads/Valid';
+import { isAfter, isWithinInterval, addDays } from "date-fns";
+
+export interface Time {
+  datetime: string;
+  utc: string;
+  local: string;
+  by?: string;
+  title?: string;
+}
+
+export interface Valid {
+  interval?: string;
+  utc?: string;
+  local?: string;
+  min?: string | Time | false;
+  max?: string | Time | false;
+}
 
 export interface Interval {
   start?: Date;
@@ -10,12 +25,12 @@ function intervalMin(valid: Valid): undefined | Date {
   if (!valid) return;
 
   if (valid.min) {
-    return new Date(typeof valid.min === 'string' ? valid.min : valid.min.utc);
+    return new Date(typeof valid.min === "string" ? valid.min : valid.min.utc);
   } else if (valid.interval && valid.interval.split) {
-    let val = valid.interval.split('/')[0];
+    let val = valid.interval.split("/")[0];
     if (val) return new Date(val);
   } else if (valid.utc && valid.utc.split) {
-    let val = valid.utc.split('/')[0];
+    let val = valid.utc.split("/")[0];
     if (val) return new Date(val);
   }
 }
@@ -24,12 +39,12 @@ function intervalMax(valid: Valid): undefined | Date {
   if (!valid) return;
 
   if (valid.max) {
-    return new Date(typeof valid.max === 'string' ? valid.max : valid.max.utc);
+    return new Date(typeof valid.max === "string" ? valid.max : valid.max.utc);
   } else if (valid.interval && valid.interval.split) {
-    let val = valid.interval.split('/')[1];
+    let val = valid.interval.split("/")[1];
     if (val) return new Date(val);
   } else if (valid.utc && valid.utc.split) {
-    let val = valid.utc.split('/')[1];
+    let val = valid.utc.split("/")[1];
     if (val) return new Date(val);
   }
 }
@@ -76,10 +91,14 @@ export function intervalString(interval: Interval) {
   return `${startStr}/${endStr}`;
 }
 
-export function interval(from: number | null, to: number | null, now?: Date): Interval {
+export function interval(
+  from: number | null,
+  to: number | null,
+  now?: Date
+): Interval {
   now = now || new Date();
   return {
     start: from == null ? undefined : addDays(now, from),
-    end: to == null ? undefined : addDays(now, to)
+    end: to == null ? undefined : addDays(now, to),
   };
 }
