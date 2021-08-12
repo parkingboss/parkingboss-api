@@ -6,7 +6,6 @@ import { queries, ApiQueries } from "./queries";
 export interface ApiOptions {
   client: string;
   apiBase?: string;
-  skipNormalization?: boolean;
   skipUrlRewrite?: boolean;
 }
 
@@ -14,7 +13,6 @@ export interface ApiSettings {
   readonly client: string;
   user: User | null;
   apiBase: string;
-  skipNormalization: boolean;
 }
 
 export interface CoreApi {
@@ -28,7 +26,6 @@ function optsToSettings(opts: ApiOptions): ApiSettings {
     client: opts.client,
     user: null,
     apiBase: opts.apiBase || "TEMP_FAKE",
-    skipNormalization: !!opts.skipNormalization,
   };
   if (!opts.apiBase) {
     const watcher = apiBase();
