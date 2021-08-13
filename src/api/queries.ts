@@ -3,7 +3,7 @@ import { User } from "./loadUser";
 
 import { isInterval, intervalString } from "../time";
 
-export type QueryParams = Record<string, unknown>;
+export type QueryParams = Record<string, any>;
 
 export interface ApiQueries {
   fetch(
@@ -12,18 +12,14 @@ export interface ApiQueries {
     query?: QueryParams,
     body?: null | FormData | Blob,
     useAuthHeader?: boolean
-  ): Promise<unknown>;
-  get(
-    url: string,
-    query?: QueryParams,
-    useAuthHeader?: boolean
-  ): Promise<unknown>;
+  ): Promise<any>;
+  get(url: string, query?: QueryParams, useAuthHeader?: boolean): Promise<any>;
   post(
     url: string,
     query?: QueryParams,
     body?: FormData | Blob,
     useAuthHeader?: boolean
-  ): Promise<unknown>;
+  ): Promise<any>;
 }
 
 export function queries(settings: ApiSettings): ApiQueries {
