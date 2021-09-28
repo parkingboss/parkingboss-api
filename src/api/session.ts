@@ -155,7 +155,7 @@ function isLoggedIn(settings: ApiSettings) {
 }
 
 function isValidUser(user: User | null): boolean {
-  return !!(user && (!user.expires || user.expires < new Date()));
+  return !!(user && (!user.expires || user.expires > new Date()));
 }
 
 async function logOut(setUser: UserUpdater) {
