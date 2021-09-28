@@ -1,5 +1,5 @@
 import { ApiSettings } from "./index";
-import { urls } from "@parkingboss/utils";
+import { LoginUrlParams, buildLoginUrl } from "@parkingboss/utils/es6/urls";
 import { loadUser, setUser, unsetUser, jwtUser, User } from "./loadUser";
 
 type Action<T> = (t: T) => void;
@@ -10,10 +10,13 @@ export interface SessionControl {
     subscribe(fn: UserUpdater): () => void;
     set(user: User | null): void;
   };
+  validUser: {
+    subscribe(fn: UserUpdater): () => void;
+  };
   isLoggedIn(): boolean;
-  logIn(redirect: true): void;
-  logIn(email: string, password?: string): Promise<void>;
-  logOut(skipRedirect?: boolean): void;
+  logIn(): void;
+  logIn(email: string, password: string): Promise<void>;
+  logOut(): void;
   renew(password: string): Promise<void>;
   requestPasswordReset(password: string): Promise<any>;
 }
@@ -21,13 +24,16 @@ export interface SessionControl {
 export function session(settings: ApiSettings): SessionControl {
   settings.user = loadUser();
   const user = userStore(settings);
+  const validUser = validUserStore(user);
   return Object.assign({
     user,
+    validUser,
     isLoggedIn: () => isLoggedIn(settings),
-    logIn: (email: string | true, password?: string) => logIn(settings, user.set, email, password),
+    logIn: (email?: string, password?: string) =>
+      email && password ? logIn(settings, user.set, email, password) : logIn(settings, user.set),
     renew: (password: string) => renew(settings, user.set, password),
     requestPasswordReset: (email: string) => requestPasswordReset(settings, email),
-    logOut: (skipRedirect?: boolean) => logOut(user.set, skipRedirect),
+    logOut: () => logOut(user.set),
   });
 }
 
@@ -58,35 +64,56 @@ function userStore(settings: ApiSettings) {
   };
 }
 
-async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string | true, password?: string) {
-  if (email === true) {
-    window.location.href = urls.buildLoginUrl({ clientId: settings.client });
-    return;
-  }
+function validUserStore(user: SessionControl["user"]): SessionControl["validUser"] {
+  return {
+    subscribe(fn) {
+      const unsub = user.subscribe((currentUser) => {
+        if (isValidUser(currentUser)) {
+          fn(currentUser);
+        } else {
+          fn(null);
+        }
+      });
+      return unsub;
+    },
+  };
+}
 
-  if (password === undefined) {
-    window.location.href = urls.buildLoginUrl({ clientId: settings.client, email });
-    return;
-  }
+async function logIn(settings: ApiSettings, setUser: UserUpdater): Promise<void>;
+async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string, password: string): Promise<User>;
+async function logIn(
+  settings: ApiSettings,
+  setUser: UserUpdater,
+  email?: string,
+  password?: string
+): Promise<void | User> {
+  if (email && password) {
+    const url = new URL(settings.apiBase + "/auth/tokens");
+    url.searchParams.set("lifetime", "P7D");
+    url.searchParams.set("email", email);
+    url.searchParams.set("ts", new Date().toISOString());
 
-  const url = new URL(settings.apiBase + "/auth/tokens");
-  url.searchParams.set("lifetime", "P7D");
-  url.searchParams.set("email", email);
-  url.searchParams.set("ts", new Date().toISOString());
+    const body = new FormData();
+    body.set("email", email);
+    body.set("password", password);
 
-  const body = new FormData();
-  body.set("email", email);
-  body.set("password", password);
+    const result = await self.fetch(url.toString(), { method: "POST", body });
+    const responseBody = await result.json();
 
-  const result = await self.fetch(url.toString(), { method: "POST", body });
-  const responseBody = await result.json();
+    if (result.ok) {
+      setUser(jwtUser(responseBody));
+      return responseBody;
+    }
 
-  if (result.ok) {
-    setUser(jwtUser(responseBody));
     return responseBody;
   }
 
-  return responseBody;
+  const loginParams = { clientId: settings.client } as LoginUrlParams;
+  if (settings.user?.email) {
+    loginParams.email = settings.user.email;
+  }
+
+  window.location.href = buildLoginUrl(loginParams);
 }
 
 async function requestPasswordReset(settings: ApiSettings, email: string) {
@@ -105,17 +132,21 @@ async function requestPasswordReset(settings: ApiSettings, email: string) {
 }
 
 function isLoggedIn(settings: ApiSettings) {
-  return !!settings.user;
+  return isValidUser(settings.user);
 }
 
-async function logOut(setUser: UserUpdater, skipRedirect = false) {
+function isValidUser(user: User | null) {
+  return user && (!user.expires || user.expires < new Date());
+}
+
+async function logOut(setUser: UserUpdater) {
   setUser(null);
-  if (!skipRedirect) window.location.href = "https://my.parkingboss.com/user/logout";
 }
 
-function renew(settings: ApiSettings, setUser: UserUpdater, password: string): Promise<void> {
-  if (!settings.user) {
+function renew(settings: ApiSettings, setUser: UserUpdater, password: string): Promise<User> {
+  if (!settings.user?.email) {
     throw new Error("Use logIn. Cannot log in without current user data.");
   }
-  return logIn(settings, setUser, settings.user.email, password);
+
+  return logIn(settings, setUser, settings.user.email!, password);
 }
