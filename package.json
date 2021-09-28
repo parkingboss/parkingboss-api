@@ -1,6 +1,6 @@
 {
   "name": "@parkingboss/api",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "The Parking Boss API",
   "main": "dist/cjs/index.js",
   "module": "dist/es6/index.js",
