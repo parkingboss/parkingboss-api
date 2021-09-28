@@ -24,7 +24,7 @@ export function session(settings: ApiSettings): SessionControl {
   return Object.assign({
     user,
     isLoggedIn: () => isLoggedIn(settings),
-    logIn: (email: string, password?: string) => logIn(settings, user.set, email, password),
+    logIn: (email: string | true, password?: string) => logIn(settings, user.set, email, password),
     renew: (password: string) => renew(settings, user.set, password),
     requestPasswordReset: (email: string) => requestPasswordReset(settings, email),
     logOut: (skipRedirect?: boolean) => logOut(user.set, skipRedirect),
@@ -58,7 +58,12 @@ function userStore(settings: ApiSettings) {
   };
 }
 
-async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string, password?: string) {
+async function logIn(settings: ApiSettings, setUser: UserUpdater, email: string | true, password?: string) {
+  if (email === true) {
+    window.location.href = urls.buildLoginUrl({ clientId: settings.client });
+    return;
+  }
+
   if (password === undefined) {
     window.location.href = urls.buildLoginUrl({ clientId: settings.client, email });
     return;
