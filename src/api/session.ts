@@ -67,14 +67,33 @@ function userStore(settings: ApiSettings) {
 function validUserStore(user: SessionControl["user"]): SessionControl["validUser"] {
   return {
     subscribe(fn) {
+      let timeout: number | null = null;
+
       const unsub = user.subscribe((currentUser) => {
+        if (timeout != null) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+
         if (isValidUser(currentUser)) {
           fn(currentUser);
+
+          const msToExpiry = +currentUser!.expires - Date.now();
+          timeout = setTimeout(() => {
+            fn(null);
+            timeout = null;
+          }, msToExpiry);
         } else {
           fn(null);
         }
       });
-      return unsub;
+
+      return () => {
+        if (timeout != null) {
+          clearTimeout(timeout);
+        }
+        unsub();
+      };
     },
   };
 }
@@ -135,8 +154,8 @@ function isLoggedIn(settings: ApiSettings) {
   return isValidUser(settings.user);
 }
 
-function isValidUser(user: User | null) {
-  return user && (!user.expires || user.expires < new Date());
+function isValidUser(user: User | null): boolean {
+  return !!(user && (!user.expires || user.expires < new Date()));
 }
 
 async function logOut(setUser: UserUpdater) {
