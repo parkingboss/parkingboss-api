@@ -1,5 +1,5 @@
 import { ApiSettings } from "./index";
-import { LoginUrlParams, buildLoginUrl } from "@parkingboss/utils/es6/urls";
+import { LoginUrlParams, buildLoginUrl } from "./urls";
 import { loadUser, setUser, unsetUser, jwtUser, User } from "./loadUser";
 
 type Action<T> = (t: T) => void;
