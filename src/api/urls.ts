@@ -32,7 +32,7 @@ export function build(url: UrlLike, opts: UrlOpts): string;
 export function build(urlOrOpt: UrlLike | UrlOpts, maybeOpt?: UrlOpts): string {
   const urlArg: UrlLike = isUrlLike(urlOrOpt) ? urlOrOpt : self.location;
   const opts: UrlOpts = maybeOpt || (isUrlLike(urlOrOpt) ? {} : urlOrOpt);
-  const url = new URL(urlArg.toString(), document.baseURI);
+  const url = new URL(urlArg.toString(), "https://api.propertyboss.io/v2");
 
   Object.entries(opts.query || {}).forEach(([key, val]) => {
     if (val) {
