@@ -15,6 +15,12 @@
     "prepare": "run-s clean build",
     "postversion": "git push && git push --tags && npm publish --access=public"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/es6/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/parkingboss/parkingboss-api.git"
